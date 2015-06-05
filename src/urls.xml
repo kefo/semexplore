@@ -1,0 +1,8 @@
+<rewriter xmlns="http://marklogic.com/xdmp/rewriter">
+    <match-path matches="^/$">
+        <dispatch>/index.sjs</dispatch>
+    </match-path>
+    <match-path matches="^/hello\-world$">
+        <dispatch>/hello-world.xqy</dispatch>
+    </match-path>
+</rewriter>

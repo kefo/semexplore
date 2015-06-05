@@ -1,0 +1,86 @@
+(:
+This is technically an XQuery file.  
+:)
+"
+.container
+    // Example row of columns
+    .row
+        .col-md-12
+            h2 Types
+            p
+                | These are the types of resources found in the triplestore.  These are calculated purely on the presence of
+                | rdf:type in the data, not on any inferences.  If many of these are prefixed with 'owl', the store is likely
+                | loaded with an 
+                a(href='http://www.w3.org/TR/owl2-overview/') Owl Ontology.
+                | If there are a high number of skos:Concept resources or anything prefixed with 'skos', then you likely have a
+                | controlled vocabulary modelled in 
+                a(href='http://www.w3.org/TR/skos-reference/') SKOS.
+                |  Ideally, the 'label' column would be filled.  If it is not, then it means that the 'type' resource is not 
+                | described in the store.  This is common if the store is loaded with instance data, such as a controlled 
+                | vocabulary, but less common if it is an ontology or model.
+                if types.length === 0
+                    .well.well-sm No classes found.  Not impossible, but rare.  You loaded some data, yes?
+                else
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Class
+                                th Label
+                                th Count
+                        tbody
+                            each val, index in types
+                                tr
+                                    td #{val.readableType}
+                                    td #{val.label}
+                                    td #{val.count}
+    .row
+        .col-md-12
+            h2 Properties
+            p
+                | These are the properties found in the triplestore.  These are calculated purely on the presence of
+                | an existing property in the data, not on any inferences.  If many of these are prefixed with 'owl', 
+                | the store is likely loaded with an 
+                a(href='http://www.w3.org/TR/owl2-overview/') Owl Ontology.
+                | If there are many properties prefixed with 'skos', then you likely have a
+                | controlled vocabulary modelled in 
+                a(href='http://www.w3.org/TR/skos-reference/') SKOS.
+                | If there are a large number of properties in an uncommon namespace, the data may represent
+                | instance data described using a custom ontology or model.
+                |  Ideally, the 'label' column would be filled.  If it is not, then it means that the 'property' resource is not 
+                | described in the store.
+                if properties.length === 0
+                    .well.well-sm No properties found.  What's up with that?  Did you load some data?
+                else
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Property
+                                th Label
+                                th Count
+                        tbody
+                            each val, index in properties
+                                tr
+                                    td #{val.readableType}
+                                    td #{val.label}
+                                    td #{val.count}
+    .row
+        .col-md-12
+            h2 Top Classes
+            p
+                | These are the classes found at the top of any hierarchy that might exist in the 
+                | source data.
+                if topclasses.length === 0
+                    .well.well-sm No top classes found.
+                else
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Resource
+                                th Label
+                        tbody
+                            each val, index in topclasses
+                                tr
+                                    td #{val.readableType}
+                                    td #{val.label}
+        
+"
