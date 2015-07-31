@@ -6,6 +6,24 @@ This is technically an XQuery file.
     // Example row of columns
     .row
         .col-md-12
+            h2 Graphs
+            p
+                | These are the graphs in the triplestore.
+                if graphs.length === 0
+                    .well.well-sm No graphs found. Meh. It's a choice.
+                else
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Graph
+                                th Label
+                        tbody
+                            each val, index in graphs
+                                tr
+                                    td #{val.readableType}
+                                    td #{val.label}
+    .row
+        .col-md-12
             h2 Types
             p
                 | These are the types of resources found in the triplestore.  These are calculated purely on the presence of
@@ -67,8 +85,9 @@ This is technically an XQuery file.
         .col-md-12
             h2 Top Classes
             p
-                | These are the classes found at the top of any hierarchy that might exist in the 
-                | source data.
+                | These are the classes found without a rdfs:subClassOf relationship.  Presumably, these 
+                | classes site atop any hierarchy that might exist in the source data.  In the event more than 
+                | 200 top-level classes are found, this list is truncated to that number.
                 if topclasses.length === 0
                     .well.well-sm No top classes found.
                 else

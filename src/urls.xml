@@ -2,6 +2,9 @@
     <match-path matches="^/$">
         <dispatch>/index.sjs</dispatch>
     </match-path>
+    <match-path matches="^/search/$">
+        <dispatch>/search.sjs</dispatch>
+    </match-path>
     <match-path matches="^/hello\-world$">
         <dispatch>/hello-world.xqy</dispatch>
     </match-path>

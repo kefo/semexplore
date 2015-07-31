@@ -13,10 +13,10 @@ nav.navbar.navbar-default
         |           
         #navbar.navbar-collapse.collapse
             ul.nav.navbar-nav
-                li.active
-                    a(href='#') Home
-                li
-                    a(href='#') About
+                li(class=(pageTitle === 'Home')? 'active' : '')
+                    a(href='/') Home
+                li(class=(pageTitle === 'Search')? 'active' : '')
+                    a(href='/search/') Search
                 li
                     a(href='#') Contact
                 li.dropdown

@@ -53,6 +53,22 @@ function parseSparqlResults(sparqlresults, urivar) {
     return results;
 }
 
+// All the graphs
+var sparqlQuery = ' \
+    ' + sparqlPrefixes + ' \
+    SELECT DISTINCT ?graph ?label \
+    WHERE { \
+        GRAPH ?graph { \
+            ?s ?p ?o . \
+        } . \
+        OPTIONAL { \
+            ?graph rdfs:label ?label . \
+        } \
+    } \
+    ';
+var sparqlgraphs = sem.sparql(sparqlQuery);
+var graphs = parseSparqlResults(sparqlgraphs, "graph");
+
 
 // All the types
 var sparqlQuery = ' \
@@ -68,7 +84,7 @@ var sparqlQuery = ' \
     ORDER BY DESC(?count) \
     ';
 var sparqltypes = sem.sparql(sparqlQuery);
-var types = parseSparqlResults(sparqltypes, "type")
+var types = parseSparqlResults(sparqltypes, "type");
 
 // All the properties
 var sparqlQuery = ' \
@@ -84,25 +100,10 @@ var sparqlQuery = ' \
     ORDER BY DESC(?count) \
     ';
 var sparqlproperties = sem.sparql(sparqlQuery);
-var properties = parseSparqlResults(sparqlproperties, "property")
-
-// Top level classes
-var sparqlQuery = ' \
-    ' + sparqlPrefixes + ' \
-    SELECT ?s ?label \
-    WHERE { \
-        ?s ?p ?o . \
-        OPTIONAL { ?s rdfs:subClassOf ?o } . \
-        FILTER (!BOUND(?o)) . \
-        OPTIONAL { \
-            ?s rdfs:label ?label . \
-        } \
-    } \
-    ';
-var sparqltopclasses = sem.sparql(sparqlQuery);
-var topclasses = parseSparqlResults(sparqltopclasses, "s")
+var properties = parseSparqlResults(sparqlproperties, "property");
 
 /*
+    Top level classes
     ML 8 does not support negation - period - presently 
     so this is not possible:
     # Top-level classes?
@@ -120,7 +121,7 @@ var sparqlQuery = ' \
     ' + sparqlPrefixes + ' \
     SELECT DISTINCT ?s \
     WHERE { \
-        ?s <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?o . \
+        ?s rdfs:subClassOf|skos:broader|skos:topConceptOf|^skos:hasTopConcept ?o . \
         FILTER ( isIRI(?s) ) . \
     } \
     ';
@@ -130,21 +131,27 @@ for (var r of sparqlsubclasses) {
     subclasses.push(String(r.s));
 }
 
+/*
+        #{ \
+        #    ?s rdf:type owl:Class . \
+        #} UNION { \
+        #    ?s rdf:type rdfs:Class . \
+        #} . \
+        */
 // All distinct resources declared an owl:Class or rdfs:Class
 var sparqlQuery = ' \
     ' + sparqlPrefixes + ' \
-    SELECT DISTINCT ?s ?label \
+    SELECT ?s ?label \
     WHERE { \
-        { \
-            ?s rdf:type owl:Class . \
-        } UNION { \
-            ?s rdf:type rdfs:Class . \
-        } \
+        ?s rdf:type ?t . \
+        FILTER (?t IN (owl:Class, rdfs:Class, skos:Concept)) . \
         FILTER ( isIRI(?s) ) . \
         OPTIONAL { \
-            ?s rdfs:label ?label . \
+            ?s rdfs:label|skos:prefLabel ?label . \
         } \
     } \
+    GROUP BY ?s \
+    LIMIT 1000000 \
     ';
 var sparqlclasses = sem.sparql(sparqlQuery);
 var topclasses = [];
@@ -161,11 +168,11 @@ for (var r of sparqlclasses) {
         topclasses.push(tc);    
     }
 }
-
-
+topclasses = topclasses.slice(0, 200);
 
 var pagedata =
     {
+        "pageTitle": "Home",
         "types": types,
         "properties": properties,
         "topclasses": topclasses

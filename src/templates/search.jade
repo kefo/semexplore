@@ -1,0 +1,54 @@
+(:
+This is technically an XQuery file.  
+:)
+"
+.container
+    // Example row of columns
+    .row
+        form.form-inline(method='GET', action='/search/')
+            .input-group.col-sm-8.col-sm-offset-3
+                input#search.form-control(placeholder='Enter search text', type='search', name='q', value=q)
+                span.input-group-btn
+                    button#searchButton.btn.btn-default(type='default') Search
+                    a#clearButton.btn.btn-default(href='/search/',role='button') Clear
+            .form-group.col-sm-8.col-sm-offset-3
+                .radio
+                    label
+                    input#optionsRadios1(type='radio', name='includeBnodes', value='0', checked=(includeBnodes===false ? 'checked' : undefined)) 
+                    |  Only IRIs
+                .radio
+                    label
+                    input#optionsRadios2(type='radio', name='includeBnodes', value='1' , checked=(includeBnodes===true ? 'checked' : undefined)) 
+                    |  IRIs and Anonymous Resources (bnodes)
+    .row
+        .col-md-12
+            h2 Results
+            table.table.table-striped
+                tbody
+                    tr
+                        td.col-md-2 
+                            b Query
+                        td= results.query
+                    tr
+                        td.col-md-2 
+                            b Elapsed Time
+                        td= results.elapsedTime
+                    tr
+                        td.col-md-2 
+                            b No. of hits
+                        td= results.count
+                    
+            table.table.table-striped
+                tbody
+                    each r, index in results.hits
+                        tr
+                            td
+                                h3 #{r.s}
+                                table.table(style='background-color: inherit')
+                                    tbody
+                                        each val, index in r.triples
+                                            tr
+                                                td.col-md-2 
+                                                    b #{val.readableProperty}
+                                                td #{val.o}
+"
